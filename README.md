@@ -1,3 +1,19 @@
+# pythonwhois-alt
+
+This is a fork of powerful Sven Slootweg's pythonwhois library which 
+unfortunately seems abandoned. My changelog is 
+[here](https://github.com/kilgoretrout1985/pythonwhois-py3/blob/master/CHANGELOG).
+
+Install it with:
+
+```
+pip install pythonwhois-alt
+```
+
+Original description goes under:
+
+___
+
 pythonwhois
 ===========
 
