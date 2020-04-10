@@ -28,7 +28,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setuptools.setup(
     name='whois_alt',
-    version='2.4.5',
+    version='2.4.6',
     packages=['whois_alt'],
     package_dir={"whois_alt":"whois_alt"},
     package_data={"whois_alt":["*.dat"]},

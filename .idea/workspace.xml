@@ -2,25 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9c2b5f2a-2549-407c-8255-dd5c3d4d1cce" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/pythonwhois-alt.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/setup.cfg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pwhois" beforeDir="false" afterPath="$PROJECT_DIR$/pwhois" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pythonwhois/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/whois_alt/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pythonwhois/airports.dat" beforeDir="false" afterPath="$PROJECT_DIR$/whois_alt/airports.dat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pythonwhois/countries.dat" beforeDir="false" afterPath="$PROJECT_DIR$/whois_alt/countries.dat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pythonwhois/countries3.dat" beforeDir="false" afterPath="$PROJECT_DIR$/whois_alt/countries3.dat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pythonwhois/net.py" beforeDir="false" afterPath="$PROJECT_DIR$/whois_alt/net.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pythonwhois/parse.py" beforeDir="false" afterPath="$PROJECT_DIR$/whois_alt/parse.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pythonwhois/shared.py" beforeDir="false" afterPath="$PROJECT_DIR$/whois_alt/shared.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pythonwhois/states_au.dat" beforeDir="false" afterPath="$PROJECT_DIR$/whois_alt/states_au.dat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pythonwhois/states_ca.dat" beforeDir="false" afterPath="$PROJECT_DIR$/whois_alt/states_ca.dat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pythonwhois/states_us.dat" beforeDir="false" afterPath="$PROJECT_DIR$/whois_alt/states_us.dat" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,7 +39,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1586535909613</updated>
-      <workItem from="1586535910969" duration="767000" />
+      <workItem from="1586535910969" duration="936000" />
     </task>
     <servers />
   </component>
