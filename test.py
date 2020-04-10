@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 
-import sys, argparse, os, pythonwhois, json, datetime, codecs, time
+import sys, argparse, os, whois_alt, json, datetime, codecs, time
 import pkgutil
 import encodings
 
@@ -120,7 +120,7 @@ if args.mode[0] == "run":
 			with codecs.open(os.path.join("test/target_normalized", target), "r") as f:
 				normalized = f.read()
 		except IOError as e:
-			sys.stderr.write("Missing target data for domain %(domain)s. Run `./test.py update %(domain)s` to correct this, after verifying that pythonwhois can correctly parse this particular domain.\n" % {"domain": target})
+			sys.stderr.write("Missing target data for domain %(domain)s. Run `./test.py update %(domain)s` to correct this, after verifying that whois_alt can correctly parse this particular domain.\n" % {"domain": target})
 			errors = True
 			continue
 		
@@ -137,7 +137,7 @@ if args.mode[0] == "run":
 	for target, data, target_default, target_normalized in suites:
 		for normalization in (True, []):
 			start_time = time.time()
-			parsed = pythonwhois.parse.parse_raw_whois(data, normalized=normalization)
+			parsed = whois_alt.parse.parse_raw_whois(data, normalized=normalization)
 			time_taken = (time.time() - start_time) * 1000 # in ms
 			parsed = json.loads(encoded_json_dumps(parsed)) # Stupid Unicode hack
 			
@@ -217,8 +217,8 @@ elif args.mode[0] == "update":
 		exit(1)
 	
 	for target, data in updates:
-		default = pythonwhois.parse.parse_raw_whois(data)
-		normalized = pythonwhois.parse.parse_raw_whois(data, normalized=True)
+		default = whois_alt.parse.parse_raw_whois(data)
+		normalized = whois_alt.parse.parse_raw_whois(data, normalized=True)
 		with codecs.open(os.path.join("test/target_default", target), "w") as f:
 			f.write(encoded_json_dumps(default))
 		with codecs.open(os.path.join("test/target_normalized", target), "w") as f:

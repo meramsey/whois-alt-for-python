@@ -3,36 +3,55 @@ import setuptools
 
 README = open(os.path.join(os.path.dirname(__file__), 'README.md')).read()
 
+# pypi publishing
+# 1. set $HOME/.pypirc
+#      [distutils]
+#      index-servers =
+#          pypi
+#
+#      [pypi]
+#      username: <name>
+#      password: <password>
+# 2. deactivate  // if there's an active env
+# 3. cd pycharmenv3; source bin/activate
+# 4. pip3 install --upgrade wheel setuptools twine
+# 5. cd <whatever_to>/keychest-server
+# 6. rm -rf dist/*
+# 7. python3 setup.py sdist bdist_wheel
+# 7a.twine check dist/*
+# 8. twine upload dist/<latest>.tar.gz
+# 9. you can test it with "pip3 install --upgrade --no-cache-dir keychest-server"
+
+
 # allow setup.py to be run from any path
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setuptools.setup(
-    name='pythonwhois-alt',
-    version='2.4.4',
-    packages=['pythonwhois'],
-    package_dir={"pythonwhois":"pythonwhois"},
-    package_data={"pythonwhois":["*.dat"]},
+    name='whois_alt',
+    version='2.4.5',
+    packages=['whois_alt'],
+    package_dir={"whois_alt":"whois_alt"},
+    package_data={"whois_alt":["*.dat"]},
     install_requires=['argparse'],
-    provides=['pythonwhois'],
+    provides=['whois_alt'],
     scripts=["pwhois"],
 
-    license="WTFPL",
-    description='Module for retrieving and parsing the WHOIS data for a domain. Supports most domains. No dependencies.',
+    license="MIT",
+    description='Module for retrieving and parsing the WHOIS data for a domain. Supports most domains. No dependencies. '
+                'Fork of pythonwhois-alt as we need quick bug fixes',
     long_description=README,
     long_description_content_type="text/markdown",
     keywords='whois nic domain',
 
-    author='Yuriy Zemskov',
-    author_email='zemskyura@gmail.com',
-    url='https://github.com/kilgoretrout1985/pythonwhois-alt',
+    author='KeyChest',
+    author_email='support@keychest.net',
+    url='https://gitlab.com/keychest/whois-alt-for-python',
 
     classifiers=[
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',

@@ -1,6 +1,6 @@
 #!/usr/bin/env python2
 
-import argparse, pythonwhois, json, datetime, sys
+import argparse, whois_alt, json, datetime, sys
 try:
 	from collections import OrderedDict
 except ImportError as e:
@@ -8,7 +8,7 @@ except ImportError as e:
 
 parser = argparse.ArgumentParser(description="Retrieves and parses WHOIS data for a domain name.")
 parser.add_argument("-r", "--raw", action="store_true", help="Outputs raw WHOIS data and doesn't attempt to parse it. Segments are separated by a double-dash (--).")
-parser.add_argument("-j", "--json", action="store_true", help="Outputs structured WHOIS data in JSON format, according to the pythonwhois API.")
+parser.add_argument("-j", "--json", action="store_true", help="Outputs structured WHOIS data in JSON format, according to the whois_alt API.")
 parser.add_argument("-f", "--file", action="store", help="Loads and parses raw double-dash-delimited WHOIS data from a specified file, instead of contacting a WHOIS server.", default=None)
 parser.add_argument("domain", nargs=1)
 args = parser.parse_args()
@@ -20,7 +20,7 @@ def json_fallback(obj):
 		return obj
 
 if args.file is None:
-	data, server_list = pythonwhois.net.get_whois_raw(args.domain[0], with_server_list=True)
+	data, server_list = whois_alt.net.get_whois_raw(args.domain[0], with_server_list=True)
 else:
 	server_list = []
 	with open(args.file, "r") as f:
@@ -30,9 +30,9 @@ if args.raw == True:
 	print("\n--\n".join([x.encode("utf-8") for x in data]))
 else:
 	if len(server_list) > 0:
-		parsed = pythonwhois.parse.parse_raw_whois(data, normalized=True, never_query_handles=False, handle_server=server_list[-1])
+		parsed = whois_alt.parse.parse_raw_whois(data, normalized=True, never_query_handles=False, handle_server=server_list[-1])
 	else:
-		parsed = pythonwhois.parse.parse_raw_whois(data, normalized=True)
+		parsed = whois_alt.parse.parse_raw_whois(data, normalized=True)
 	
 	if args.json == True:
 		print(json.dumps(parsed, default=json_fallback))
