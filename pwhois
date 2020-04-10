@@ -6,7 +6,7 @@ try:
 except ImportError as e:
 	from ordereddict import OrderedDict
 
-parser = argparse.ArgumentParser(description="Retrieves and parses WHOIS data for a domain name.")
+parser = argparse.ArgumentParser(description="Retrieves and parses WHOIS data for a domain name using whois_alt.")
 parser.add_argument("-r", "--raw", action="store_true", help="Outputs raw WHOIS data and doesn't attempt to parse it. Segments are separated by a double-dash (--).")
 parser.add_argument("-j", "--json", action="store_true", help="Outputs structured WHOIS data in JSON format, according to the whois_alt API.")
 parser.add_argument("-f", "--file", action="store", help="Loads and parses raw double-dash-delimited WHOIS data from a specified file, instead of contacting a WHOIS server.", default=None)
