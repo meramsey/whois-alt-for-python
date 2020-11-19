@@ -242,7 +242,7 @@ registrant_regexes = [
     # nic.ch
     "\n\n(?:Owner)?\s+: (?P<name>.*)\n(?:\s+: (?P<organization>.*)\n)?\s+: (?P<street>.*)\n\s+: (?P<city>.*)\n\s+: (?P<state>.*)\n\s+: (?P<country>.*)\n",
     # nic.io
-    "Contact Information:\n\[Name\]\s*(?P<name>.*)\n\[Email\]\s*(?P<email>.*)\n\[Web Page\]\s*(?P<url>.*)\n\[Postal code\]\s*(?P<postalcode>.*)\n\[Postal Address\]\s*(?P<street1>.*)\n(?:\s+(?P<street2>.*)\n)?(?:\s+(?P<street3>.*)\n)?\[Phone\]\s*(?P<phone>.*)\n\[Fax\]\s*(?P<fax>.*)\n",
+    "Contact Information:\n\[Name\]\s*(?P<name>[^\n]*)\n\[Email\]\s*(?P<email>[^\n]*)\n\[Web Page\]\s*(?P<url>[^\n]*)\n\[Postal code\]\s*(?P<postalcode>[^\n]*)\n\[Postal Address\]\s*(?P<street1>[^\n]*)\n(?:\s+(?P<street2>[^\n]*)\n(?:\s+(?P<street3>[^\n]*)\n)?)?(?:\[Phone\]\s*(?P<phone>[^\n]*)\n)+\[Fax\]\s*(?P<fax>[^\n]*)\n",
     # jprs.jp
     "g\. \[Organization\]               (?P<organization>.+)\n",  # .co.jp registrations at jprs.jp
     "Registrant ID:(?P<handle>.*)\nRegistrant Name:(?P<name>.*)\n(?:Registrant Organization:(?P<organization>.*)\n)?Registrant Address1:(?P<street1>.*)\n(?:Registrant Address2:(?P<street2>.*)\n)?(?:Registrant Address3:(?P<street3>.*)\n)?Registrant City:(?P<city>.*)\n(?:Registrant State/Province:(?P<state>.*)\n)?(?:Registrant Postal Code:(?P<postalcode>.*)\n)?Registrant Country:(?P<country>.*)\nRegistrant Country Code:.*\nRegistrant Phone Number:(?P<phone>.*)\n(?:Registrant Facsimile Number:(?P<facsimile>.*)\n)?Registrant Email:(?P<email>.*)",
@@ -295,6 +295,8 @@ registrant_regexes = [
     "owner:\s+(?P<name>.+)",  # .br
     "person:\s+(?P<name>.+)",  # nic.ru (person)
     "org:\s+(?P<organization>.+)",  # nic.ru (organization)
+    # MarkMonitor, Inc.
+    "Registrant Organization:(?P<organization>.*)\nRegistrant State/Province:(?P<state>.*)\nRegistrant Country:(?P<country>.*)\nRegistrant Email:(?P<email>.*)",
 ]
 
 tech_contact_regexes = [
@@ -358,6 +360,8 @@ tech_contact_regexes = [
     # HKDNR (.hk)
     "TECH ID:(?P<handle>.+)\nTECH Name:(?P<name>.*)\n(?:TECH Organization:(?P<organization>.*)\n)?TECH Street1:(?P<street1>.+?)\n(?:TECH Street2:(?P<street2>.+?)\n(?:TECH Street3:(?P<street3>.+?)\n)?)?TECH City:(?P<city>.+)\nTECH State:(?P<state>.*)\nTECH Postal Code:(?P<postalcode>.+)\nTECH Country:(?P<country>[A-Z]+)\nTECH Phone:(?P<phone>.*?)\nTECH Fax:(?P<fax>.*)\nTECH Email:(?P<email>.+)\n",
     # Realtime Register
+    # MarkMonitor, Inc.
+    "Tech Organization:(?P<organization>.*)\nTech State/Province:(?P<state>.*)\nTech Country:(?P<country>.*)\nTech Email:(?P<email>.*)",
 ]
 
 admin_contact_regexes = [
@@ -407,6 +411,8 @@ admin_contact_regexes = [
     # HKDNR (.hk)
     "ADMIN ID:(?P<handle>.+)\nADMIN Name:(?P<name>.*)\n(?:ADMIN Organization:(?P<organization>.*)\n)?ADMIN Street1:(?P<street1>.+?)\n(?:ADMIN Street2:(?P<street2>.+?)\n(?:ADMIN Street3:(?P<street3>.+?)\n)?)?ADMIN City:(?P<city>.+)\nADMIN State:(?P<state>.*)\nADMIN Postal Code:(?P<postalcode>.+)\nADMIN Country:(?P<country>[A-Z]+)\nADMIN Phone:(?P<phone>.*?)\nADMIN Fax:(?P<fax>.*)\nADMIN Email:(?P<email>.+)\n",
     # Realtime Register
+    # MarkMonitor, Inc.
+    "Admin Organization:(?P<organization>.*)\nAdmin State/Province:(?P<state>.*)\nAdmin Country:(?P<country>.*)\nAdmin Email:(?P<email>.*)",
 ]
 
 billing_contact_regexes = [
@@ -487,11 +493,11 @@ nic_contact_regexes = [
     # nic.ir, individual  - this is a nasty one.
     "nic-hdl:\s+(?P<handle>.+)\norg:\s+(?P<organization>.+)\n(?:e-mail:\s+(?P<email>.+)\n)?(?:address:\s+(?P<street1>.+?)(?:,+ (?P<street2>.+?)(?:,+ (?P<street3>.+?)(?:,+ (?P<street4>.+?)(?:,+ (?P<street5>.+?)(?:,+ (?P<street6>.+?)(?:,+ (?P<street7>.+?))?)?)?)?)?)?, (?P<city>.+), (?P<state>.+), (?P<country>.+)\n)?(?:phone:\s+(?P<phone>.+)\n)?(?:fax-no:\s+(?P<fax>.+)\n)?",
     # nic.ir, organization
-    "nic-hdl:\s*(?P<handle>.+)\ntype:\s*(?P<type>.+)\ncontact:\s*(?P<name>.+)\n(?:.+\n)*?(?:address:\s*(?P<street1>.+)\naddress:\s*(?P<street2>.+)\naddress:\s*(?P<street3>.+)\naddress:\s*(?P<country>.+)\n)?(?:phone:\s*(?P<phone>.+)\n)?(?:fax-no:\s*(?P<fax>.+)\n)?(?:.+\n)*?(?:e-mail:\s*(?P<email>.+)\n)?(?:.+\n)*?changed:\s*(?P<changedate>[0-9]{2}\/[0-9]{2}\/[0-9]{4}).*\n",
+    "nic-hdl:\s*(?P<handle>.+)\ntype:\s*(?P<type>.+)\ncontact:\s*(?P<name>.+)\n(?:.+\n)*?(?:address:\s*(?P<street1>.+)\naddress:\s*(?P<street2>.+)\naddress:\s*(?P<street3>.+)\naddress:\s*(?P<country>.+)\n)?(?:phone:\s*(?P<phone>.+)\n)?(?:fax-no:\s*(?P<fax>.+)\n)?(?:.+\n)*?(?:e-mail:\s*(?P<email>.+)\n)?(?:.+\n)*?changed:\s*(?P<changedate>[^ ]+).*\n",
     # AFNIC madness without country field
-    "nic-hdl:\s*(?P<handle>.+)\ntype:\s*(?P<type>.+)\ncontact:\s*(?P<name>.+)\n(?:.+\n)*?(?:address:\s*(?P<street1>.+)\n)?(?:address:\s*(?P<street2>.+)\n)?(?:address:\s*(?P<street3>.+)\n)?(?:phone:\s*(?P<phone>.+)\n)?(?:fax-no:\s*(?P<fax>.+)\n)?(?:.+\n)*?(?:e-mail:\s*(?P<email>.+)\n)?(?:.+\n)*?changed:\s*(?P<changedate>[0-9]{2}\/[0-9]{2}\/[0-9]{4}).*\n",
+    "nic-hdl:\s*(?P<handle>.+)\ntype:\s*(?P<type>.+)\ncontact:\s*(?P<name>.+)\n(?:.+\n)*?(?:address:\s*(?P<street1>.+)\n)?(?:address:\s*(?P<street2>.+)\n)?(?:address:\s*(?P<street3>.+)\n)?(?:phone:\s*(?P<phone>.+)\n)?(?:fax-no:\s*(?P<fax>.+)\n)?(?:.+\n)*?(?:e-mail:\s*(?P<email>.+)\n)?(?:.+\n)*?changed:\s*(?P<changedate>[^ ]+).*\n",
     # AFNIC madness any country -at all-
-    "nic-hdl:\s*(?P<handle>.+)\ntype:\s*(?P<type>.+)\ncontact:\s*(?P<name>.+)\n(?:.+\n)*?(?:address:\s*(?P<street1>.+)\n)?(?:address:\s*(?P<street2>.+)\n)?(?:address:\s*(?P<street3>.+)\n)?(?:address:\s*(?P<street4>.+)\n)?country:\s*(?P<country>.+)\n(?:phone:\s*(?P<phone>.+)\n)?(?:fax-no:\s*(?P<fax>.+)\n)?(?:.+\n)*?(?:e-mail:\s*(?P<email>.+)\n)?(?:.+\n)*?changed:\s*(?P<changedate>[0-9]{2}\/[0-9]{2}\/[0-9]{4}).*\n",
+    "nic-hdl:\s*(?P<handle>.+)\ntype:\s*(?P<type>.+)\ncontact:\s*(?P<name>.+)\n(?:.+\n)*?(?:address:\s*(?P<street1>.+)\n)?(?:address:\s*(?P<street2>.+)\n)?(?:address:\s*(?P<street3>.+)\n)?(?:address:\s*(?P<street4>.+)\n)?country:\s*(?P<country>.+)\n(?:phone:\s*(?P<phone>.+)\n)?(?:fax-no:\s*(?P<fax>.+)\n)?(?:.+\n)*?(?:e-mail:\s*(?P<email>.+)\n)?(?:.+\n)*?changed:\s*(?P<changedate>[^ ]+).*\n",
     # AFNIC madness with country field
 ]
 
@@ -631,11 +637,11 @@ def parse_raw_whois(raw_data, normalized=None, never_query_handles=True, handle_
         # SIDN isn't very standard either. And EURid uses a similar format.
         match = re.search("Registrar:\n\s+(?:Name:\s*)?(\S.*)", segment)
         if match is not None:
-            data["registrar"].insert(0, match.group(1).strip())
+            data["registrar"] = [match.group(1).strip()]
         match = re.search("(?:Domain nameservers|Name servers):([\s\S]*?\n)\n", segment)
         if match is not None:
             chunk = match.group(1)
-            for match in re.findall("\s+?(.+)\n", chunk):
+            for match in re.findall("\s+?(^[\n]+)\n", chunk):
                 match = match.split()[0]
                 # Prevent nameserver aliases from being picked up.
                 if not match.startswith("[") and not match.endswith("]"):
