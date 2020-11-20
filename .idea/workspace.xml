@@ -2,9 +2,24 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9c2b5f2a-2549-407c-8255-dd5c3d4d1cce" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/pythonwhois-alt.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/pythonwhois-alt.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LICENSE.txt" beforeDir="false" afterPath="$PROJECT_DIR$/LICENSE.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pwhois" beforeDir="false" afterPath="$PROJECT_DIR$/pwhois" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/whois_alt/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/wizard_whois/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/whois_alt/airports.dat" beforeDir="false" afterPath="$PROJECT_DIR$/wizard_whois/airports.dat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/whois_alt/countries.dat" beforeDir="false" afterPath="$PROJECT_DIR$/wizard_whois/countries.dat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/whois_alt/countries3.dat" beforeDir="false" afterPath="$PROJECT_DIR$/wizard_whois/countries3.dat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/whois_alt/net.py" beforeDir="false" afterPath="$PROJECT_DIR$/wizard_whois/net.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/whois_alt/parse.py" beforeDir="false" afterPath="$PROJECT_DIR$/wizard_whois/parse.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/whois_alt/shared.py" beforeDir="false" afterPath="$PROJECT_DIR$/wizard_whois/shared.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/whois_alt/states_au.dat" beforeDir="false" afterPath="$PROJECT_DIR$/wizard_whois/states_au.dat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/whois_alt/states_ca.dat" beforeDir="false" afterPath="$PROJECT_DIR$/wizard_whois/states_ca.dat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/whois_alt/states_us.dat" beforeDir="false" afterPath="$PROJECT_DIR$/wizard_whois/states_us.dat" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -14,10 +29,10 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="JupyterTrust" id="4042f22e-570a-4b31-9a93-a0376e6a4586" />
   <component name="ProjectId" id="1aMC7h6DkNcxwGjgLZNpA53O8R4" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
@@ -32,6 +47,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -43,20 +59,18 @@
       <option name="presentableId" value="Default" />
       <updated>1586535909613</updated>
       <workItem from="1586535910969" duration="1966000" />
+      <workItem from="1605902354729" duration="46000" />
+      <workItem from="1605902416562" duration="1678000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="1" />
+    <option name="version" value="3" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="208" y="80" key="SettingsEditor" timestamp="1586537856321">
-      <screen x="0" y="23" width="1440" height="877" />
+    <state x="464" y="154" key="SettingsEditor" timestamp="1605902486593">
+      <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="208" y="80" key="SettingsEditor/0.23.1440.877@0.23.1440.877" timestamp="1586537856321" />
-    <state x="362" y="205" width="845" height="538" key="find.popup" timestamp="1586538064655">
-      <screen x="0" y="23" width="1440" height="877" />
-    </state>
-    <state x="362" y="205" width="845" height="538" key="find.popup/0.23.1440.877@0.23.1440.877" timestamp="1586538064655" />
+    <state x="464" y="154" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1605902486593" />
   </component>
 </project>

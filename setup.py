@@ -27,25 +27,25 @@ README = open(os.path.join(os.path.dirname(__file__), 'README.md')).read()
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setuptools.setup(
-    name='whois_alt',
-    version='2.4.9',
-    packages=['whois_alt'],
-    package_dir={"whois_alt":"whois_alt"},
-    package_data={"whois_alt":["*.dat"]},
+    name='wizard_whois',
+    version='2.5.0',
+    packages=['wizard_whois'],
+    package_dir={"wizard_whois": "wizard_whois"},
+    package_data={"wizard_whois": ["*.dat"]},
     install_requires=['argparse'],
-    provides=['whois_alt'],
+    provides=['wizard_whois'],
     scripts=["pwhois"],
 
     license="MIT",
-    description='Module for retrieving and parsing the WHOIS data for a domain. Supports most domains. No dependencies. '
+    description='Module for retrieving and parsing the WHOIS data for a domain. Supports most domains. No dependencies.'
                 'Fork of pythonwhois-alt as we need quick bug fixes',
     long_description=README,
     long_description_content_type="text/markdown",
     keywords='whois nic domain',
 
-    author='KeyChest',
-    author_email='support@keychest.net',
-    url='https://gitlab.com/keychest/whois-alt-for-python',
+    author='Michael Ramsey',
+    author_email='mike@hackerdise.me',
+    url='https://gitlab.com/mikeramsey/whois-alt-for-python',
 
     classifiers=[
         'Environment :: Web Environment',

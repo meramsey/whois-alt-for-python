@@ -1,4 +1,4 @@
-# whois_alt
+# wizard_whois
 
 This is a fork of powerful 
 [Sven Slootweg's pythonwhois](https://github.com/joepie91/python-whois) 
@@ -7,21 +7,21 @@ library which unfortunately seems abandoned..
 Install it with:
 
 ```
-pip install whois_alt
+pip install wizard_whois
 ```
 
 Original description goes under.
 
 ___
 
-whois_alt
+wizard_whois
 =========
 
 A WHOIS retrieval and parsing library for Python.
 
 ## Dependencies
 
-None! All you need is the Python standard library.
+None! All you need is the Python standard library. Optional RDAP WHOIS based lookups require requests and json libraries.
 
 ## Instructions
 

@@ -1,6 +1,6 @@
 import socket, re, sys
 from codecs import encode, decode
-from whois_alt import shared
+from wizard_whois import shared
 
 
 def get_whois_raw(domain, server="", previous=None, rfc3490=True, never_cut=False, with_server_list=False, server_list=None):
@@ -13,7 +13,8 @@ def get_whois_raw(domain, server="", previous=None, rfc3490=True, never_cut=Fals
         ".ps": "whois.pnina.ps",
         ".buzz": "whois.nic.buzz",
         ".moe": "whois.nic.moe",
-        # The following is a bit hacky, but IANA won't return the right answer for example.com because it's a direct registration.
+        # The following is a bit hacky, but IANA won't return the right answer for example.com because it's a direct
+        # registration.
         "example.com": "whois.verisign-grs.com"
     }
 
@@ -97,3 +98,4 @@ def whois_request(domain, server, port=43, timeout=10):
             break
         buff += data
     return buff.decode("utf-8")
+

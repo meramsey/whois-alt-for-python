@@ -1,6 +1,6 @@
 from __future__ import print_function
 import re, sys, datetime, csv, pkgutil
-from whois_alt import shared, net
+from wizard_whois import shared, net
 
 try:
     from io import StringIO
@@ -9,7 +9,7 @@ except ImportError:
 
 
 def pkgdata(name):
-    data = pkgutil.get_data("whois_alt", name)
+    data = pkgutil.get_data("wizard_whois", name)
     if sys.version_info < (3, 0):
         return data
     else:
