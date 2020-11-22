@@ -79,12 +79,19 @@ class DomainInfo:
         self.spf = ''
         self.dkim = ''
         self.dmarc = ''
+        self.waf = ''
         self.dnssec = {}
+        # Setup asyncio
+        self.loop = asyncio.get_event_loop()
+        self.resolver = aiodns.DNSResolver(loop=self.loop)
 
         # Initialize Whois and DNS
         self.get_whois_domain()
         self.check_expiration()
         self.get_domain_dns()
+
+    async def query(self, name, query_type):
+        return await self.resolver.query(name, query_type)
 
     def get_domain_whois_info(self):
         # "domain": "google.com"
@@ -158,17 +165,12 @@ class DomainInfo:
 
         #  "WHOIS": {"nameservers": [["NS1.GOOGLE.COM", "216.239.32.10"], ["NS2.GOOGLE.COM", "216.239.34.10"]]}
         try:
-            loop = asyncio.get_event_loop()
-            resolver = aiodns.DNSResolver(loop=loop)
-
-            async def query(name, query_type):
-                return await resolver.query(name, query_type)
 
             for nameserver in self.domain_whois['nameservers']:
                 # print(ns)
                 ns = nameserver.lower()
-                coro = query(ns, 'A')
-                result = loop.run_until_complete(coro)
+                coro = self.query(ns, 'A')
+                result = self.loop.run_until_complete(coro)
                 # print(result)
                 ip = str(result[0].host)
                 # print(ns, ip)
@@ -258,17 +260,11 @@ class DomainInfo:
 
         #  "WHOIS": {"nameservers": [["NS1.GOOGLE.COM", "216.239.32.10"], ["NS2.GOOGLE.COM", "216.239.34.10"]]}
         try:
-            loop = asyncio.get_event_loop()
-            resolver = aiodns.DNSResolver(loop=loop)
-
-            async def query(name, query_type):
-                return await resolver.query(name, query_type)
-
             for nameserver in self.domain_whois['nameservers']:
                 # print(nameserver['ldhName'])
                 ns = nameserver['ldhName'].lower()
-                coro = query(ns, 'A')
-                result = loop.run_until_complete(coro)
+                coro = self.query(ns, 'A')
+                result = self.loop.run_until_complete(coro)
                 # print(result)
                 ip = str(result[0].host)
                 # print(ns, ip)
@@ -280,20 +276,13 @@ class DomainInfo:
 
     def get_domain_dns(self):
         site = self.domain
-
-        loop = asyncio.get_event_loop()
-        resolver = aiodns.DNSResolver(loop=loop)
-
-        async def query(name, query_type):
-            return await resolver.query(name, query_type)
-
         try:
-            res_ns = loop.run_until_complete(resolver.query(site, 'NS'))
+            res_ns = self.loop.run_until_complete(self.resolver.query(site, 'NS'))
             for elem in res_ns:
                 # print(elem.host)
                 ns = str(elem.host)
-                coro = query(ns, 'A')
-                result = loop.run_until_complete(coro)
+                coro = self.query(ns, 'A')
+                result = self.loop.run_until_complete(coro)
                 # print(result)
                 ip = str(result[0].host)
                 self.ns.append(ns)
@@ -306,7 +295,7 @@ class DomainInfo:
         if self.dns_lookup_continue:
             try:
                 # SOA query the host's DNS
-                res_soa = loop.run_until_complete(resolver.query(site, 'SOA'))
+                res_soa = self.loop.run_until_complete(self.resolver.query(site, 'SOA'))
                 # print(res_soa)
                 # for elem in res_soa:
                 # print(str(res_soa.nsname) + " " + str(res_soa.hostmaster) + " " + str(res_soa.serial))
@@ -323,8 +312,38 @@ class DomainInfo:
                 pass
 
             try:
+                # default._domainkey.domain.com
+                # DKIM query the host's DNS
+                dkim_name = 'default._domainkey.' + site
+                res_dkim = self.loop.run_until_complete(self.resolver.query(dkim_name, 'TXT'))
+                #print(res_dkim[0].text)
+                # print(dkim_name + ' ==> ' + str(res_dkim.text))
+                for elem in res_dkim:
+                    print(str(elem.text))
+                    self.domain_txt.append(['TXT', str(dkim_name), str(elem.text)])
+                    if 'v=DKIM' in str(elem.text):
+                        self.dkim = str(elem.text)
+            except:
+                pass
+
+            try:
+                # _dmarc.domain.com
+                # DMARC query the host's DNS
+                dmarc_name = '_dmarc.' + site
+                res_dmarc = self.loop.run_until_complete(self.resolver.query(dmarc_name, 'TXT'))
+                # print(res_dkim[0].text)
+                # print(dkim_name + ' ==> ' + str(res_dkim.text))
+                for elem in res_dmarc:
+                    print(str(elem.text))
+                    self.domain_txt.append(['TXT', str(dmarc_name), str(elem.text)])
+                    if 'v=DMARC' in str(elem.text):
+                        self.dmarc = str(elem.text)
+            except:
+                pass
+
+            try:
                 # WWW query the host's DNS
-                res_cname = loop.run_until_complete(resolver.query('www.' + site, 'CNAME'))
+                res_cname = self.loop.run_until_complete(self.resolver.query('www.' + site, 'CNAME'))
                 www_name = 'www.' + site
                 # print(www_name + ' ==> ' + res_cname.cname)
                 self.domain_www.append(['CNAME', str(www_name), str(res_cname.cname)])
@@ -332,7 +351,7 @@ class DomainInfo:
                 pass
 
             try:
-                res_www = loop.run_until_complete(resolver.query('www.' + site, 'A'))
+                res_www = self.loop.run_until_complete(self.resolver.query('www.' + site, 'A'))
                 for elem in res_www:
                     # print(elem)
                     www_name = 'www.' + site
@@ -342,7 +361,7 @@ class DomainInfo:
                 pass
 
             try:
-                res_a = loop.run_until_complete(resolver.query(site, 'A'))
+                res_a = self.loop.run_until_complete(self.resolver.query(site, 'A'))
                 for elem in res_a:
                     # print(elem.host)
                     domain_a = elem.host
@@ -351,7 +370,7 @@ class DomainInfo:
                 pass
 
             try:
-                res_aaaa = loop.run_until_complete(resolver.query(site, 'AAAA'))
+                res_aaaa = self.loop.run_until_complete(self.resolver.query(site, 'AAAA'))
                 for elem in res_aaaa:
                     # print(elem.host)
                     domain_aaaa = elem.host
@@ -361,7 +380,7 @@ class DomainInfo:
 
             try:
                 # MX query the host's DNS
-                res_mx = loop.run_until_complete(resolver.query(site, 'MX'))
+                res_mx = self.loop.run_until_complete(self.resolver.query(site, 'MX'))
                 for elem in res_mx:
                     # print(res_mx)
                     # print(str(elem.host) + ' has preference ' + str(elem.priority))
@@ -370,7 +389,7 @@ class DomainInfo:
                 pass
 
             try:
-                res_txt = loop.run_until_complete(resolver.query(site, 'TXT'))
+                res_txt = self.loop.run_until_complete(self.resolver.query(site, 'TXT'))
                 for elem in res_txt:
                     # print(str(elem.text))
                     self.domain_txt.append(['TXT', str(site), str(elem.text)])
@@ -410,16 +429,19 @@ class DomainInfo:
         else:
             self.get_domain_whois_info()
 
+
 # How to use
-# domain = DomainInfo('wizardassistant.com')
-# print(f"{domain.domain}'s registrar is {domain.registrar} ")
-# print(f"Whois Namservers: {domain.whois_nameservers} ")
-# print('')
-# print(f"WWW records: {domain.domain_www}")
-# print(f"SOA record: {domain.soa['serial']}")
-# print('')
-# print(f"DNS Nameservers: {domain.ns} ")
-# print(f"Domain's SPF: {domain.spf} ")
-# print(f"Domain Expiration: {domain.expiration} ")
+domain = DomainInfo('wizardassistant.com')
+print(f"{domain.domain}'s registrar is {domain.registrar} ")
+print(f"Whois Namservers: {domain.whois_nameservers} ")
+print('')
+print(f"WWW records: {domain.domain_www}")
+print(f"SOA record: {domain.soa['serial']}")
+print('')
+print(f"DNS Nameservers: {domain.ns} ")
+print(f"Domain's SPF: {domain.spf} ")
+print(f"Domain's DKIM: {domain.dkim} ")
+print(f"Domain's DMARC: {domain.dmarc} ")
+print(f"Domain Expiration: {domain.expiration} ")
 # for key, value in domain.dns.items():
 #    print(key, ':', value)
