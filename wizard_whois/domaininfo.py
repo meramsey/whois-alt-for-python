@@ -33,6 +33,7 @@ retries = Retry(total=1, backoff_factor=1, status_forcelist=[429, 500, 502, 503,
 http.mount("https://", TimeoutHTTPAdapter(max_retries=retries))
 http.mount("http://", TimeoutHTTPAdapter(max_retries=retries))
 
+
 TIMEOUT = 1.0  # timeout in seconds
 wizard_whois.net.socket.setdefaulttimeout(TIMEOUT)
 
@@ -49,6 +50,13 @@ def check_http(name):
 
 
 class DomainInfo:
+    http = requests.Session()
+    # Mount  TimeoutHTTP adapter with retries it for both http and https usage
+    adapter = TimeoutHTTPAdapter(timeout=2.5)
+    retries = Retry(total=1, backoff_factor=1, status_forcelist=[429, 500, 502, 503, 504])
+    http.mount("https://", TimeoutHTTPAdapter(max_retries=retries))
+    http.mount("http://", TimeoutHTTPAdapter(max_retries=retries))
+
     DEFAULT_TIMEOUT = 1  # seconds
     rdapbootstrapurl = 'https://www.rdap.net/'
     wizard_whois.net.socket.setdefaulttimeout(DEFAULT_TIMEOUT)
@@ -67,35 +75,53 @@ class DomainInfo:
         self.status = []
         self.soa = {}
         # Setup lists variables
+        # Namservers with A record lookups
         self.whois_nameservers = []
         self.domain_nameservers = []
+        # Domain WWW: A, AAA, CNAME values
         self.domain_www = []
+        # Domain MX Records list
         self.domain_mx = []
+        # Domain TXT type records
         self.domain_txt = []
-        self.dns_lookup_continue = ''
-        self.expired = ''
-        self.dns = {}
+        # Nameserver lists without IP's
+        self.whois_ns = []
         self.ns = []
+        # Abort DNS lookups when no valid DNS NS found to prevent lockups
+        self.dns_lookup_continue = ''
+        # Domain Expired
+        self.expired = ''
+        # Domain DNS Dictionary
+        self.dns = {}
+        # Whois and DNS NS agree on Nameserver names
+        self.auth_ns_match = ''
+        # Sender Policy Framework
         self.spf = ''
-        self.dkim = ''
+        # DomainKeys Identified Mail (DKIM)
+        self.dkim = []
+        # Domain-based Message Authentication, Reporting & Conformance (DMARC)
         self.dmarc = ''
+        # Holds values for detected WAF's/CDN/Proxy like Sucuri/Cloudflare/Quic.cloud
         self.waf = ''
+        # DNSSEC aka SecureDNS status of domain
         self.dnssec = {}
         # Setup asyncio
         self.loop = asyncio.get_event_loop()
         self.resolver = aiodns.DNSResolver(loop=self.loop)
 
         # Initialize Whois and DNS
+        self.domain_dict['domain'] = self.domain
         self.get_whois_domain()
         self.check_expiration()
         self.get_domain_dns()
+        self.check_auth_nameservers_match()
 
     async def query(self, name, query_type):
         return await self.resolver.query(name, query_type)
 
     def get_domain_whois_info(self):
         # "domain": "google.com"
-        self.domain_dict['domain'] = self.domain
+        # self.domain_dict['domain'] = self.domain
         # domain_dict['WHOIS'] = {'nameservers': None}
 
         try:
@@ -175,6 +201,7 @@ class DomainInfo:
                 ip = str(result[0].host)
                 # print(ns, ip)
                 self.whois_nameservers.append([str(ns), str(ip)])
+                self.whois_ns.append(ns)
             self.domain_dict['WHOIS']['nameservers'] = self.whois_nameservers
         except:
             pass
@@ -216,7 +243,7 @@ class DomainInfo:
 
     def create_domain_dict_rdap(self):
         # "domain": "google.com"
-        self.domain_dict['domain'] = self.domain
+        # self.domain_dict['domain'] = self.domain
 
         # rdapsource
         self.domain_dict['rdapurl'] = self.rdapbootstrapurl + 'domain/' + self.domain
@@ -269,6 +296,7 @@ class DomainInfo:
                 ip = str(result[0].host)
                 # print(ns, ip)
                 self.whois_nameservers.append([ns, ip])
+                self.whois_ns.append(ns)
 
             self.domain_dict['WHOIS']['nameservers'] = self.whois_nameservers
         except:
@@ -312,17 +340,20 @@ class DomainInfo:
                 pass
 
             try:
-                # default._domainkey.domain.com
-                # DKIM query the host's DNS
-                dkim_name = 'default._domainkey.' + site
-                res_dkim = self.loop.run_until_complete(self.resolver.query(dkim_name, 'TXT'))
-                #print(res_dkim[0].text)
-                # print(dkim_name + ' ==> ' + str(res_dkim.text))
-                for elem in res_dkim:
-                    print(str(elem.text))
-                    self.domain_txt.append(['TXT', str(dkim_name), str(elem.text)])
-                    if 'v=DKIM' in str(elem.text):
-                        self.dkim = str(elem.text)
+                # Here we are checking all the popular and common DKIM selector names in a loop
+                dkim_selectors = ['default', 'dkim', 'dkim1', 'google', 'k1', 'k2', 'mail', 'selector1', 'selector2', 'zoho']
+                for selector in dkim_selectors:
+                    # default._domainkey.domain.com
+                    # DKIM query the host's DNS
+                    dkim_name = selector + '._domainkey.' + site
+                    res_dkim = self.loop.run_until_complete(self.resolver.query(dkim_name, 'TXT'))
+                    # print(res_dkim[0].text)
+                    # print(dkim_name + ' ==> ' + str(res_dkim.text))
+                    for elem in res_dkim:
+                        # print(str(elem.text))
+                        self.domain_txt.append(['TXT', str(dkim_name), str(elem.text)])
+                        if 'v=DKIM' in str(elem.text):
+                            self.dkim.append([str(dkim_name), str(elem.text)])
             except:
                 pass
 
@@ -334,7 +365,7 @@ class DomainInfo:
                 # print(res_dkim[0].text)
                 # print(dkim_name + ' ==> ' + str(res_dkim.text))
                 for elem in res_dmarc:
-                    print(str(elem.text))
+                    # print(str(elem.text))
                     self.domain_txt.append(['TXT', str(dmarc_name), str(elem.text)])
                     if 'v=DMARC' in str(elem.text):
                         self.dmarc = str(elem.text)
@@ -429,6 +460,13 @@ class DomainInfo:
         else:
             self.get_domain_whois_info()
 
+    def check_auth_nameservers_match(self):
+        if sorted(self.whois_ns) == sorted(self.ns):
+            print('Authoratative NS and DNS nameservers match')
+            self.auth_ns_match = True
+        else:
+            self.auth_ns_match = False
+
 
 # How to use
 domain = DomainInfo('wizardassistant.com')
@@ -443,5 +481,11 @@ print(f"Domain's SPF: {domain.spf} ")
 print(f"Domain's DKIM: {domain.dkim} ")
 print(f"Domain's DMARC: {domain.dmarc} ")
 print(f"Domain Expiration: {domain.expiration} ")
+
+
+print(f"Whois Namservers: {domain.whois_ns} ")
+print(f"DNS Namservers: {domain.ns} ")
+print(f"Auth and DNS Namservers match: {domain.auth_ns_match} ")
+
 # for key, value in domain.dns.items():
 #    print(key, ':', value)
