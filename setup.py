@@ -28,7 +28,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setuptools.setup(
     name='wizard_whois',
-    version='2.5.3',
+    version='2.5.4',
     packages=['wizard_whois'],
     package_dir={"wizard_whois": "wizard_whois"},
     package_data={"wizard_whois": ["*.dat"]},
@@ -37,8 +37,8 @@ setuptools.setup(
     scripts=["pwhois"],
 
     license="MIT",
-    description='Module for retrieving and parsing the WHOIS data for a domain. Supports most domains. No dependencies.'
-                'Fork of pythonwhois-alt as we need quick bug fixes',
+    description='Module for retrieving and parsing the WHOIS data for a domain. Supports most domains. '
+                'Fork of pythonwhois-alt and whois_alt as we need quick bug fixes',
     long_description=README,
     long_description_content_type="text/markdown",
     keywords='whois nic domain',

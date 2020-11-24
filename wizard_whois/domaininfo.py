@@ -33,7 +33,6 @@ retries = Retry(total=1, backoff_factor=1, status_forcelist=[429, 500, 502, 503,
 http.mount("https://", TimeoutHTTPAdapter(max_retries=retries))
 http.mount("http://", TimeoutHTTPAdapter(max_retries=retries))
 
-
 TIMEOUT = 1.0  # timeout in seconds
 wizard_whois.net.socket.setdefaulttimeout(TIMEOUT)
 
@@ -119,6 +118,15 @@ class DomainInfo:
     async def query(self, name, query_type):
         return await self.resolver.query(name, query_type)
 
+    def get_hostname_from_ip(self, ip):
+        try:
+            reverse_name = '.'.join(reversed(ip.split("."))) + ".in-addr.arpa"
+            coro = self.query(reverse_name, 'PTR')
+            result = self.loop.run_until_complete(coro)
+            return result.name
+        except:
+            return ""
+
     def get_domain_whois_info(self):
         # "domain": "google.com"
         # self.domain_dict['domain'] = self.domain
@@ -126,7 +134,7 @@ class DomainInfo:
 
         try:
             self.domain_whois = wizard_whois.get_whois(self.domain)
-            print(self.domain_whois)
+            # print(self.domain_whois)
         except:
             return False
             # pass
@@ -315,6 +323,9 @@ class DomainInfo:
                 ip = str(result[0].host)
                 self.ns.append(ns)
                 self.domain_nameservers.append([ns, ip])
+                if "cloudflare" in elem.host:
+                    print("Cloudflare: FullZone detected")
+                    self.waf = 'Cloudflare: FullZone detected'
             self.dns_lookup_continue = True
         except:
             self.dns_lookup_continue = False
@@ -336,12 +347,15 @@ class DomainInfo:
                 self.domain_dict.update(domain_soa_dict)
                 # print(domain_dict)
                 self.soa = self.domain_dict['DNS']['SOA']
+                if "cloudflare" in res_soa.nsname:
+                    self.waf = 'Cloudflare: FullZone detected'
             except:
                 pass
 
             try:
                 # Here we are checking all the popular and common DKIM selector names in a loop
-                dkim_selectors = ['default', 'dkim', 'dkim1', 'google', 'k1', 'k2', 'mail', 'selector1', 'selector2', 'zoho']
+                dkim_selectors = ['default', 'dkim', 'dkim1', 'google', 'k1', 'k2', 'mail', 'selector1', 'selector2',
+                                  'zoho']
                 for selector in dkim_selectors:
                     # default._domainkey.domain.com
                     # DKIM query the host's DNS
@@ -378,6 +392,10 @@ class DomainInfo:
                 www_name = 'www.' + site
                 # print(www_name + ' ==> ' + res_cname.cname)
                 self.domain_www.append(['CNAME', str(www_name), str(res_cname.cname)])
+                if "cloudflare" in res_cname.cname:
+                    self.waf = 'Cloudflare: CNAME detected'
+                if "quic.cloud" in res_cname.cname:
+                    self.waf = "QUIC.cloud CDN: CNAME detected"
             except:
                 pass
 
@@ -462,30 +480,32 @@ class DomainInfo:
 
     def check_auth_nameservers_match(self):
         if sorted(self.whois_ns) == sorted(self.ns):
-            print('Authoratative NS and DNS nameservers match')
+            # print('Authoratative NS and DNS nameservers match')
             self.auth_ns_match = True
         else:
             self.auth_ns_match = False
 
 
 # How to use
-domain = DomainInfo('wizardassistant.com')
-print(f"{domain.domain}'s registrar is {domain.registrar} ")
-print(f"Whois Namservers: {domain.whois_nameservers} ")
-print('')
-print(f"WWW records: {domain.domain_www}")
-print(f"SOA record: {domain.soa['serial']}")
-print('')
-print(f"DNS Nameservers: {domain.ns} ")
-print(f"Domain's SPF: {domain.spf} ")
-print(f"Domain's DKIM: {domain.dkim} ")
-print(f"Domain's DMARC: {domain.dmarc} ")
-print(f"Domain Expiration: {domain.expiration} ")
-
-
-print(f"Whois Namservers: {domain.whois_ns} ")
-print(f"DNS Namservers: {domain.ns} ")
-print(f"Auth and DNS Namservers match: {domain.auth_ns_match} ")
-
-# for key, value in domain.dns.items():
-#    print(key, ':', value)
+# def check_domaininfo(name):
+#     domain = DomainInfo(name)
+#     print(f"{domain.domain}'s registrar is {domain.registrar} ")
+#     print(f"Whois Namservers: {domain.whois_nameservers} ")
+#     print('')
+#     print(f"WWW records: {domain.domain_www}")
+#     print(f"SOA record: {domain.soa}")
+#     print(f"MX records: {domain.domain_mx}")
+#     print(f"DNS Nameservers: {domain.ns} ")
+#     print(f"Domain's SPF: {domain.spf} ")
+#     print(f"Domain's DKIM: {domain.dkim} ")
+#     print(f"Domain's DMARC: {domain.dmarc} ")
+#     print(f"Domain Expiration: {domain.expiration} ")
+#     print(f"Whois Namservers: {domain.whois_ns} ")
+#     print(f"DNS Namservers: {domain.ns} ")
+#     print(f"Auth and DNS Namservers match: {domain.auth_ns_match} ")
+#     print(f"WAF check: {domain.waf} ")
+#     # for key, value in domain.dns.items():
+#     #    print(key, ':', value)
+#
+#
+# check_domaininfo('sucuri.net')
