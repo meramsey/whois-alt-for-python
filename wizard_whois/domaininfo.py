@@ -415,29 +415,32 @@ class DomainInfo:
 
             try:
                 res_www = self.loop.run_until_complete(self.resolver.query('www.' + site, 'A'))
-                for elem in res_www:
-                    # print(elem)
-                    www_name = 'www.' + site
-                    # print('www.' + site + ' ==> ' + elem.host)
-                    self.domain_www.append(['A', str(www_name), str(elem.host)])
+                www_name = 'www.' + site
+                # for elem in res_www:
+                #     # print(elem)
+                #     # print('www.' + site + ' ==> ' + elem.host)
+                www_host = res_www[0].host
+                self.domain_www.append(['A', str(www_name), str(www_host)])
             except:
                 pass
 
             try:
                 res_a = self.loop.run_until_complete(self.resolver.query(site, 'A'))
-                for elem in res_a:
-                    # print(elem.host)
-                    domain_a = elem.host
-                    self.domain_www.append(['A', str(site), str(domain_a)])
+                # for elem in res_a:
+                #     print(elem.host)
+                #    domain_a = elem.host
+                domain_a = res_a[0].host
+                self.domain_www.append(['A', str(site), str(domain_a)])
             except:
                 pass
 
             try:
                 res_aaaa = self.loop.run_until_complete(self.resolver.query(site, 'AAAA'))
-                for elem in res_aaaa:
-                    # print(elem.host)
-                    domain_aaaa = elem.host
-                    self.domain_www.append(['AAAA', str(site), str(domain_aaaa)])
+                # for elem in res_aaaa:
+                #     # print(elem.host)
+                #     domain_aaaa = elem.host
+                domain_aaaa = res_aaaa[0].host
+                self.domain_www.append(['AAAA', str(site), str(domain_aaaa)])
             except:
                 pass
 
@@ -502,7 +505,7 @@ class DomainInfo:
 
 # How to use
 def check_domaininfo():
-    domain = DomainInfo('wizardassistant.com')
+    domain = DomainInfo('cloudflare.com')
     print(f"{domain.domain}'s registrar is {domain.registrar} ")
     print(f"Whois Nameservers: {domain.whois_nameservers} ")
     print('')
@@ -525,4 +528,4 @@ def check_domaininfo():
 # elapsed_time = timeit.timeit(check_domaininfo, number=1)/1
 # print("DNS Lookup took: ", elapsed_time)
 
-
+# check_domaininfo()

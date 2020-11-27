@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="9c2b5f2a-2549-407c-8255-dd5c3d4d1cce" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/wizard_whois/domaininfo.py" beforeDir="false" afterPath="$PROJECT_DIR$/wizard_whois/domaininfo.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -102,7 +103,7 @@
       <workItem from="1606126785926" duration="63000" />
       <workItem from="1606140329978" duration="8975000" />
       <workItem from="1606226170610" duration="2329000" />
-      <workItem from="1606395564726" duration="5504000" />
+      <workItem from="1606395564726" duration="11523000" />
     </task>
     <servers />
   </component>
@@ -118,22 +119,22 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="743" y="277" width="424" height="478" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1606191169619" />
-    <state width="1878" height="366" key="GridCell.Tab.0.bottom" timestamp="1606475801212">
+    <state width="1337" height="200" key="GridCell.Tab.0.bottom" timestamp="1606488632637">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1878" height="366" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1606475801212" />
-    <state width="1878" height="366" key="GridCell.Tab.0.center" timestamp="1606475801212">
+    <state width="1337" height="200" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1606488632637" />
+    <state width="1337" height="200" key="GridCell.Tab.0.center" timestamp="1606488632637">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1878" height="366" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1606475801212" />
-    <state width="1878" height="366" key="GridCell.Tab.0.left" timestamp="1606475801212">
+    <state width="1337" height="200" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1606488632637" />
+    <state width="1337" height="200" key="GridCell.Tab.0.left" timestamp="1606488632637">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1878" height="366" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1606475801212" />
-    <state width="1878" height="366" key="GridCell.Tab.0.right" timestamp="1606475801212">
+    <state width="1337" height="200" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1606488632637" />
+    <state width="1337" height="200" key="GridCell.Tab.0.right" timestamp="1606488632637">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1878" height="366" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1606475801212" />
+    <state width="1337" height="200" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1606488632637" />
     <state x="464" y="154" key="SettingsEditor" timestamp="1605902486593">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -141,6 +142,6 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/whois_alt_for_python$scratch_25.coverage" NAME="scratch_25 Coverage Results" MODIFIED="1606150444981" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$APPLICATION_CONFIG_DIR$/scratches" />
-    <SUITE FILE_PATH="coverage/whois_alt_for_python$domaininfo.coverage" NAME="domaininfo Coverage Results" MODIFIED="1606475801203" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/wizard_whois" />
+    <SUITE FILE_PATH="coverage/whois_alt_for_python$domaininfo.coverage" NAME="domaininfo Coverage Results" MODIFIED="1606488632631" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/wizard_whois" />
   </component>
 </project>
