@@ -1,4 +1,5 @@
 import json
+import timeit
 import aiodns
 import wizard_whois
 import asyncio
@@ -59,6 +60,7 @@ class DomainInfo:
     DEFAULT_TIMEOUT = 1  # seconds
     rdapbootstrapurl = 'https://www.rdap.net/'
     wizard_whois.net.socket.setdefaulttimeout(DEFAULT_TIMEOUT)
+    default_resolvers = ['1.1.1.1', '8.8.8.8', '1.0.0.1', '8.8.4.4']
 
     def __init__(self, domain):
         self.name = domain
@@ -88,6 +90,8 @@ class DomainInfo:
         self.ns = []
         # Abort DNS lookups when no valid DNS NS found to prevent lockups
         self.dns_lookup_continue = ''
+        # Force DNS lookups when using custom resolver: todo
+        self.dns_lookup_force = ''
         # Domain Expired
         self.expired = ''
         # Domain DNS Dictionary
@@ -107,6 +111,8 @@ class DomainInfo:
         # Setup asyncio
         self.loop = asyncio.get_event_loop()
         self.resolver = aiodns.DNSResolver(loop=self.loop)
+        self.custom_resolvers = []
+        self.resolver.nameservers = self.default_resolvers
 
         # Initialize Whois and DNS
         self.domain_dict['domain'] = self.domain
@@ -122,6 +128,14 @@ class DomainInfo:
         try:
             reverse_name = '.'.join(reversed(ip.split("."))) + ".in-addr.arpa"
             coro = self.query(reverse_name, 'PTR')
+            result = self.loop.run_until_complete(coro)
+            return result.name
+        except:
+            return ""
+
+    def get_rdns_from_ip(self, ip):
+        try:
+            coro = self.resolver.gethostbyaddr(ip)
             result = self.loop.run_until_complete(coro)
             return result.name
         except:
@@ -330,8 +344,8 @@ class DomainInfo:
         except:
             self.dns_lookup_continue = False
             pass
-
-        if self.dns_lookup_continue:
+        # self.dns_lookup_continue = True
+        if self.dns_lookup_continue or self.dns_lookup_force:
             try:
                 # SOA query the host's DNS
                 res_soa = self.loop.run_until_complete(self.resolver.query(site, 'SOA'))
@@ -487,25 +501,28 @@ class DomainInfo:
 
 
 # How to use
-# def check_domaininfo(name):
-#     domain = DomainInfo(name)
-#     print(f"{domain.domain}'s registrar is {domain.registrar} ")
-#     print(f"Whois Namservers: {domain.whois_nameservers} ")
-#     print('')
-#     print(f"WWW records: {domain.domain_www}")
-#     print(f"SOA record: {domain.soa}")
-#     print(f"MX records: {domain.domain_mx}")
-#     print(f"DNS Nameservers: {domain.ns} ")
-#     print(f"Domain's SPF: {domain.spf} ")
-#     print(f"Domain's DKIM: {domain.dkim} ")
-#     print(f"Domain's DMARC: {domain.dmarc} ")
-#     print(f"Domain Expiration: {domain.expiration} ")
-#     print(f"Whois Namservers: {domain.whois_ns} ")
-#     print(f"DNS Namservers: {domain.ns} ")
-#     print(f"Auth and DNS Namservers match: {domain.auth_ns_match} ")
-#     print(f"WAF check: {domain.waf} ")
-#     # for key, value in domain.dns.items():
-#     #    print(key, ':', value)
-#
-#
-# check_domaininfo('sucuri.net')
+def check_domaininfo():
+    domain = DomainInfo('wizardassistant.com')
+    print(f"{domain.domain}'s registrar is {domain.registrar} ")
+    print(f"Whois Nameservers: {domain.whois_nameservers} ")
+    print('')
+    print(f"WWW records: {domain.domain_www}")
+    print(f"SOA record: {domain.soa}")
+    print(f"MX records: {domain.domain_mx}")
+    print(f"DNS Nameservers: {domain.ns} ")
+    print(f"Domain's SPF: {domain.spf} ")
+    print(f"Domain's DKIM: {domain.dkim} ")
+    print(f"Domain's DMARC: {domain.dmarc} ")
+    print(f"Domain Expiration: {domain.expiration} ")
+    print(f"Whois Nameservers: {domain.whois_ns} ")
+    print(f"DNS Nameservers: {domain.ns} ")
+    print(f"Auth and DNS Nameservers match: {domain.auth_ns_match} ")
+    print(f"WAF check: {domain.waf} ")
+    for key, value in domain.dns.items():
+        print(key, ':', value)
+
+
+# elapsed_time = timeit.timeit(check_domaininfo, number=1)/1
+# print("DNS Lookup took: ", elapsed_time)
+
+

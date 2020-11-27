@@ -28,7 +28,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setuptools.setup(
     name='wizard_whois',
-    version='2.5.4',
+    version='2.5.5',
     packages=['wizard_whois'],
     package_dir={"wizard_whois": "wizard_whois"},
     package_data={"wizard_whois": ["*.dat"]},
