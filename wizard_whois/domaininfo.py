@@ -73,7 +73,7 @@ class DomainInfo:
         self.registrar = ''
         self.registration = ''
         self.expiration = ''
-        self.status = []
+        self.status = ''
         self.soa = {}
         # Setup lists variables
         # Namservers with A record lookups
@@ -107,7 +107,7 @@ class DomainInfo:
         # Holds values for detected WAF's/CDN/Proxy like Sucuri/Cloudflare/Quic.cloud
         self.waf = ''
         # DNSSEC aka SecureDNS status of domain
-        self.dnssec = {}
+        self.dnssec = ''
         # Setup asyncio
         self.loop = asyncio.get_event_loop()
         self.resolver = aiodns.DNSResolver(loop=self.loop)
@@ -115,7 +115,9 @@ class DomainInfo:
         self.resolver.nameservers = self.default_resolvers
 
         # Initialize Whois and DNS
-        self.domain_dict['domain'] = self.domain
+        # keys = {"domain": '', "WHOIS": '', "DNS": ''}
+        # self.domain_dict = dict.fromkeys(keys)
+        # self.domain_dict['domain'] = self.domain
         self.get_whois_domain()
         self.check_expiration()
         self.get_domain_dns()
@@ -143,8 +145,9 @@ class DomainInfo:
 
     def get_domain_whois_info(self):
         # "domain": "google.com"
-        # self.domain_dict['domain'] = self.domain
-        # domain_dict['WHOIS'] = {'nameservers': None}
+        keys = {"domain": '', "WHOIS": ''}
+        self.domain_dict = dict.fromkeys(keys)
+        self.domain_dict['domain'] = self.domain
 
         try:
             self.domain_whois = wizard_whois.get_whois(self.domain)
@@ -153,29 +156,23 @@ class DomainInfo:
             return False
             # pass
 
-        # "WHOIS": {"registrar": "MarkMonitor Inc."}
-        try:
-            # domain_dict['WHOIS']['registrar'] = str(self.domain_whois['registrar'][0])
-            # print('Registrar is :' + str(self.domain_whois['registrar'][0]))
-            update_dict = {"WHOIS": {'registrar': str(self.domain_whois['registrar'][0])}}
-            self.domain_dict.update(update_dict)
-            self.registrar = str(self.domain_whois['registrar'][0])
-        except:
-            pass
-
         # "WHOIS": {"status": "['client delete prohibited', 'server transfer prohibited', 'server update prohibited']"
         try:
             # print(str(self.domain_whois['status'][0]).rsplit())
             whois_statuses = []
             whois_status = self.domain_whois['status']
+            # print(whois_status)
             for status in whois_status:
                 status = status.rsplit()
                 # print(status[0])
                 whois_statuses.append(status[0])
+                self.status = status[0]
             # print(str(whois_statuses))
             self.domain_dict['WHOIS']['status'] = whois_statuses
-
         except:
+            update_dict = {"WHOIS": {'status': 'No Status Found'}}
+            self.domain_dict.update(update_dict)
+            self.status = 'No Status Found'
             pass
 
         # Source "WHOIS": {"registration": "1997-09-15T04:00:00Z", "expiration": "2028-09-14T04:00:00Z"}
@@ -194,6 +191,18 @@ class DomainInfo:
             self.expiration = 'No Expiration Found'
             pass
 
+        # "WHOIS": {"registrar": "MarkMonitor Inc."}
+        try:
+            self.registrar = str(self.domain_whois['registrar'][0])
+            self.domain_dict['WHOIS']['registrar'] = self.registrar
+            # print('Registrar is :' + str(self.domain_whois['registrar'][0]))
+            # update_dict = {"WHOIS": {'registrar': str(self.domain_whois['registrar'][0])}}
+            # update_dict = {"WHOIS": {'registrar': str(self.domain_whois['registrar'][0])}}
+            # self.domain_dict.update(update_dict)
+
+        except:
+            pass
+
         # "WHOIS": {"secureDNS": {"delegationSigned": false}}
         try:
             domainwhois_dnssec_raw = str(self.domain_whois['raw']).split('DNSSEC: ', 1)[1]
@@ -202,12 +211,12 @@ class DomainInfo:
                 # print('signedDelegation')
                 # domain_dict['WHOIS']['secureDNS'] = 'signedDelegation'
                 self.domain_dict['WHOIS']['secureDNS'] = {"delegationSigned": 'true'}
-                self.dnssec = {"secureDNS": {"delegationSigned": 'true'}}
+                self.dnssec = True
             elif "unsigned" in domainwhois_dnssec_raw:
                 # print('unsigned')
                 # domain_dict['WHOIS']['secureDNS'] = 'unsigned'
                 self.domain_dict['WHOIS']['secureDNS'] = {"delegationSigned": 'false'}
-                self.dnssec = {"secureDNS": {"delegationSigned": 'false'}}
+                self.dnssec = False
         except:
             pass
 
@@ -238,15 +247,19 @@ class DomainInfo:
                 # self.DomainExpiresLabel.setText("Expired:")
                 # self.DomainExpiresValue.setText('')
                 # self.DomainExpiresValue.setStyleSheet("QLabel { background-color : red}")
+                self.expired = True
                 print('Domain is expired or unregistered')
                 return False
             else:
                 print('Domain is not expired')
+                self.expired = False
                 return True
         except:
             var = KeyError == 'WHOIS'
             print('No Expiration Found')
             # domain_dict['WHOIS']['expiration'] = 'No Expiration Found'
+            self.expiration = 'No Expiration Found'
+            self.expired = False
             return True
             pass
 
@@ -265,21 +278,35 @@ class DomainInfo:
 
     def create_domain_dict_rdap(self):
         # "domain": "google.com"
-        # self.domain_dict['domain'] = self.domain
+        self.domain_dict['domain'] = self.domain
 
         # rdapsource
         self.domain_dict['rdapurl'] = self.rdapbootstrapurl + 'domain/' + self.domain
 
-        # "WHOIS": {"status": "['client delete prohibited', 'server transfer prohibited', 'server update prohibited']"
+        # "WHOIS": {"registrar": "MarkMonitor Inc."}
         try:
-            self.domain_dict['WHOIS'] = {'status': str(self.domain_whois['status'])}
+            update_dict = {"WHOIS": {'registrar': str(self.domain_whois["entities"][0]['vcardArray'][1][1][3])}}
+            self.domain_dict.update(update_dict)
+            # self.domain_dict['WHOIS']['registrar'] = str(self.domain_whois["entities"][0]['vcardArray'][1][1][3])
+            self.registrar = str(self.domain_whois["entities"][0]['vcardArray'][1][1][3])
         except:
             pass
 
-        # "WHOIS": {"registrar": "MarkMonitor Inc."}
+        # "WHOIS": {"status": "['client delete prohibited', 'server transfer prohibited', 'server update prohibited']"
         try:
-            self.domain_dict['WHOIS']['registrar'] = str(self.domain_whois["entities"][0]['vcardArray'][1][1][3])
-            self.registrar = str(self.domain_whois["entities"][0]['vcardArray'][1][1][3])
+            whois_statuses = []
+            whois_status = self.domain_whois['status']
+            # print(type(whois_status))
+            for status in whois_status:
+                # print(status)
+                whois_statuses.append(status)
+                self.status = status
+            # print(str(whois_statuses))
+            # status_dict = {"WHOIS": {'status': [self.domain_whois['status']]}}
+            # self.domain_dict.update(status_dict)
+            # self.domain_dict['WHOIS'] = {'status': str(self.domain_whois['status'])}
+            self.domain_dict['WHOIS']['status'] = whois_statuses
+            # self.status = str(self.domain_whois['status'])
         except:
             pass
 
@@ -302,8 +329,12 @@ class DomainInfo:
 
         # "WHOIS": {"secureDNS": {"delegationSigned": false}}
         try:
-            self.domain_dict['WHOIS']['secureDNS'] = str(self.domain_whois['secureDNS'])
-            self.dnssec = self.domain_dict['WHOIS']['secureDNS']
+            self.dnssec = self.domain_whois['secureDNS']['delegationSigned']
+            # print('Domain DNSSEC Status rdap: ' + str(self.domain_whois['secureDNS']['delegationSigned']))
+            if self.dnssec:
+                self.domain_dict['WHOIS']['secureDNS'] = {"delegationSigned": 'true'}
+            else:
+                self.domain_dict['WHOIS']['secureDNS'] = {"delegationSigned": 'false'}
         except:
             pass
 
@@ -338,7 +369,7 @@ class DomainInfo:
                 self.ns.append(ns)
                 self.domain_nameservers.append([ns, ip])
                 if "cloudflare" in elem.host:
-                    print("Cloudflare: FullZone detected")
+                    # print("Cloudflare: FullZone detected")
                     self.waf = 'Cloudflare: FullZone detected'
             self.dns_lookup_continue = True
         except:
@@ -487,7 +518,12 @@ class DomainInfo:
                 print('TXT lookup failed')
                 pass
 
-        self.dns = self.domain_dict['DNS']
+        try:
+            self.dns = self.domain_dict['DNS']
+        except:
+            var = KeyError == 'DNS'
+            print('No DNS Found')
+            pass
 
     def get_whois_domain(self):
         if self.get_domain_rdap_info():
@@ -497,7 +533,7 @@ class DomainInfo:
 
     def check_auth_nameservers_match(self):
         if sorted(self.whois_ns) == sorted(self.ns):
-            # print('Authoratative NS and DNS nameservers match')
+            # print('Authoritative NS and DNS nameservers match')
             self.auth_ns_match = True
         else:
             self.auth_ns_match = False
@@ -505,10 +541,14 @@ class DomainInfo:
 
 # How to use
 def check_domaininfo():
-    domain = DomainInfo('cloudflare.com')
+    domain = DomainInfo('google.com.au')
+    print(f"{domain.domain}'s is expired {domain.expired} ")
     print(f"{domain.domain}'s registrar is {domain.registrar} ")
     print(f"Whois Nameservers: {domain.whois_nameservers} ")
-    print('')
+    print(f"{domain.domain}'s registrar status: {domain.status}")
+    # print(type(domain.status))
+    print(f"Domain's WAF/CDN Status: {domain.waf}")
+    print(f"Domain's DNSSEC Status: {domain.dnssec}")
     print(f"WWW records: {domain.domain_www}")
     print(f"SOA record: {domain.soa}")
     print(f"MX records: {domain.domain_mx}")
@@ -519,10 +559,11 @@ def check_domaininfo():
     print(f"Domain Expiration: {domain.expiration} ")
     print(f"Whois Nameservers: {domain.whois_ns} ")
     print(f"DNS Nameservers: {domain.ns} ")
-    print(f"Auth and DNS Nameservers match: {domain.auth_ns_match} ")
+    print(f"Auth WHOIS and DNS Nameservers match: {domain.auth_ns_match} ")
     print(f"WAF check: {domain.waf} ")
-    for key, value in domain.dns.items():
-        print(key, ':', value)
+    # for key, value in domain.dns.items():
+    #    print(key, ':', value)
+    # print(json.dumps(domain.domain_dict, indent=4, sort_keys=False))
 
 
 # elapsed_time = timeit.timeit(check_domaininfo, number=1)/1
